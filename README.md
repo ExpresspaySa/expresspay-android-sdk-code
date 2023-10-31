@@ -44,7 +44,7 @@ Add to the package build.gradle:
 
 ```groovy
 dependencies {
-    implementation 'com.github.ExpresspaySa:expresspay-android-sdk-code:1.0.4'
+    implementation 'com.github.ExpresspaySa:expresspay-android-sdk-code:1.0.5'
 }
 ```
 
