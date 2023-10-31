@@ -48,7 +48,7 @@ dependencies {
 }
 ```
 
-Latest version is: ![Release](https://badgen.net/badge/jitpack/1.0.4/green)
+Latest version is: [![](https://jitpack.io/v/ExpresspaySa/expresspay-android-sdk-code.svg)](https://jitpack.io/#ExpresspaySa/expresspay-android-sdk-code)
 
 
 ## Quick Payment Implementation
