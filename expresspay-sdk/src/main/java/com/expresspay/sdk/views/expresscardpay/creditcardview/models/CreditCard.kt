@@ -4,6 +4,7 @@ package com.expresspay.sdk.views.expresscardpay.creditcardview.models
 
 import com.expresspay.sdk.views.expresscardpay.creditcardview.extensions.isNumeric
 import java.text.SimpleDateFormat
+import java.time.YearMonth
 import java.util.*
 
 /**
@@ -100,15 +101,23 @@ open class CreditCard : Cloneable {
     fun isExpiryValid(): Boolean {
 
         return try {
-            val seperator = this.expiry.length - 4
+            val formatter =  SimpleDateFormat("MMyy", Locale.getDefault())
+            if(expiry.length == 4){
+                val eMonth = expiry.substring(0,2).toInt()
+                val eYear = expiry.substring(2,4).toInt()
 
-            val month = this.expiry.substring(0, 2).toInt()
-            val year = this.expiry.substring(2+seperator, this.expiry.length).toInt()
+                val cDate = formatter.format(Date())
+                val cMonth = cDate.substring(0,2).toInt()
+                val cYear = cDate.substring(2,4).toInt()
 
-            val month_2 = SimpleDateFormat("MM", Locale.getDefault()).format(Date()).toInt()
-            val year_2 = SimpleDateFormat("yy", Locale.getDefault()).format(Date()).toInt()
+                if(eYear > cYear)
+                    return true
 
-            return year+month >= year_2+month_2
+                if(eYear == cYear && eMonth >= cMonth)
+                    return true
+            }
+
+            false
         } catch (e: Exception) {
             false
         }
