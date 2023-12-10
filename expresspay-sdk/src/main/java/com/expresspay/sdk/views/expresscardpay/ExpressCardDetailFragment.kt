@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.expresspay.sdk.R
 import com.expresspay.sdk.databinding.FragmentExpressCardPayBinding
+import com.expresspay.sdk.model.request.card.ExpresspayCard
 import com.expresspay.sdk.model.response.base.error.ExpresspayError
 import com.expresspay.sdk.model.response.gettransactiondetails.ExpresspayGetTransactionDetailsSuccess
 import com.expresspay.sdk.model.response.sale.ExpresspaySaleResponse
@@ -21,25 +22,18 @@ import com.expresspay.sdk.views.expresscardpay.creditcardview.models.Brand
 import com.expresspay.sdk.views.expresscardpay.creditcardview.models.CardInput
 import com.expresspay.sdk.views.expresscardpay.creditcardview.util.NumberFormat
 
-internal class ExpressCardPayFragment : Fragment(), TextWatcher, OnFocusChangeListener{
+internal class ExpressCardDetailFragment(
+    val onSubmit:((ExpresspayCard) -> Unit)?,
+    val amount:String,
+    val currency:String
+    ) : Fragment(), TextWatcher, OnFocusChangeListener{
+
     lateinit var binding: FragmentExpressCardPayBinding
     var currentView:View? = null
 
-    var xpressCardPay: ExpressCardPay? = null
-    var saleResponse:ExpresspaySaleResponse? = null
-
-    val sale3dsRedirectLauncher =  registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) {
-        if(it.resultCode == Activity.RESULT_OK){
-            val result = it.data?.serializable<ExpresspayGetTransactionDetailsSuccess>("result")
-            val error = it.data?.serializable<ExpresspayError>("error")
-            transactionCompleted(result, error)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        xpressCardPay = ExpressCardPay.shared()
     }
 
     override fun onCreateView(
@@ -63,15 +57,24 @@ internal class ExpressCardPayFragment : Fragment(), TextWatcher, OnFocusChangeLi
         bindCardViewWithInputs()
 
 
-        xpressCardPay?._order?.let {
-            with(binding) {
-                lblAmount.setText(it.formattedAmount())
-                lblCurrency.setText(it.formattedCurrency())
+        with(binding) {
+            lblAmount.setText(amount)
+            lblCurrency.setText(currency)
+            btnPay.setOnClickListener {
+                val cardDetail = binding.card.cardData
+                val cardNo = cardDetail.unformattedNumber
+                val cardCvv = cardDetail.cvv
+                val month = cardDetail.expiryMonth()
+                val year = cardDetail.expiryYear()
+                if(month == null || year == null || cardNo.isEmpty() || cardCvv.isEmpty()){
+                    return@setOnClickListener
+                }
+                val card = ExpresspayCard(cardDetail.unformattedNumber, month, year, cardDetail.cvv)
+                onSubmit?.let {
+                    it(card)
+                    requireActivity().finish()
+                }
             }
-        }
-
-        binding.btnPay.setOnClickListener {
-            doSaleTransaction(binding.card.cardData)
         }
     }
 

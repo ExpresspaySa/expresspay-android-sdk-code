@@ -155,7 +155,6 @@
                         android:layout_weight="1.2"
                         android:background="#00000000"
                         android:gravity="center"
-                        android:hint="@string/expiry"
                         android:inputType="number"
                         android:maxLength="5"
                         android:textSize="13sp" />
@@ -172,9 +171,8 @@
                         android:layout_weight="1"
                         android:background="#00000000"
                         android:gravity="center"
-                        android:hint="@string/cvv"
                         android:inputType="number"
-                        android:maxLength="3"
+                        android:maxLength="4"
                         android:textSize="13sp" />
 
 

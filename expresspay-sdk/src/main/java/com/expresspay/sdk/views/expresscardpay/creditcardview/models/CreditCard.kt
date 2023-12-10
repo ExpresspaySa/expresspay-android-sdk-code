@@ -127,7 +127,7 @@ open class CreditCard : Cloneable {
      * Checks if the CVV is valid, a valid CVV must be 3 digits long and contain numbers only
      */
     fun isCvvValid(): Boolean {
-        return cvv.length == 3 && cvv.isNumeric()
+        return (cvv.length == 4 || cvv.length == 3) && cvv.isNumeric()
     }
 
     override fun toString(): String {

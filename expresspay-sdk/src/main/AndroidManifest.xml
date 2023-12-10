@@ -17,6 +17,12 @@
             android:name=".views.expresscardpay.ExpressCardPayActivity"
             android:screenOrientation="portrait"/>
 
+
+        <activity
+            android:label="Express Card Pay"
+            android:name=".views.expresscardpay.ExpressCardDetailsActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:label="Bank Verification"
             android:name=".views.expresscardpay.ExpresspaySaleWebRedirectActivity"

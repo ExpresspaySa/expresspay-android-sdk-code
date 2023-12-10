@@ -45,6 +45,12 @@
             android:hint="Order ID" />
 
         <EditText
+            android:id="@+id/etxt_order_currency_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Order Currency Code" />
+
+        <EditText
             android:id="@+id/etxt_order_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,12 +61,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Order Description" />
-
-        <EditText
-            android:id="@+id/etxt_order_currency_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Order Currency Code" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -124,6 +124,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Payer IP Address" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Card Detail:"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
+
+        <EditText
+            android:enabled="false"
+            android:id="@+id/txtCardHolderName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Card Holder Name" />
+
+        <EditText
+            android:enabled="false"
+            android:id="@+id/txtCardNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Card Number" />
+
+        <EditText
+            android:enabled="false"
+            android:id="@+id/txtCardExpiry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Card Expiry" />
+
+        <EditText
+            android:enabled="false"
+            android:id="@+id/txtCardCVV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Card CVV" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -199,6 +234,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Failure 3DSecure Sale Card" />
+
+            <RadioButton
+                android:id="@+id/rb_custom_card_entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Custom Card Entry" />
 
         </RadioGroup>
 

@@ -8,6 +8,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCaller
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import com.expresspay.sample.R
@@ -15,6 +16,7 @@ import com.expresspay.sample.app.ExpresspayTransactionStorage
 import com.expresspay.sample.app.preattyPrint
 import com.expresspay.sample.databinding.ActivitySaleBinding
 import com.expresspay.sdk.core.ExpresspaySdk
+import com.expresspay.sdk.model.request.card.ExpresspayCard
 import com.expresspay.sdk.model.request.card.ExpresspayTestCard
 import com.expresspay.sdk.model.request.options.ExpresspaySaleOptions
 import com.expresspay.sdk.model.request.order.ExpresspaySaleOrder
@@ -24,11 +26,13 @@ import com.expresspay.sdk.model.response.base.error.ExpresspayError
 import com.expresspay.sdk.model.response.sale.ExpresspaySaleCallback
 import com.expresspay.sdk.model.response.sale.ExpresspaySaleResponse
 import com.expresspay.sdk.model.response.sale.ExpresspaySaleResult
+import com.expresspay.sdk.views.expresscardpay.ExpressCardDetailsActivity
+import com.expresspay.sdk.views.expresscardpay.ExpressCardPay
 import io.kimo.lib.faker.Faker
 import java.text.DecimalFormat
 import java.util.*
 
-class ExpresspaySaleActivity : AppCompatActivity(R.layout.activity_sale) {
+class ExpresspaySaleActivity : AppCompatActivity(R.layout.activity_sale) , ActivityResultCaller {
 
     private lateinit var binding: ActivitySaleBinding
     private lateinit var expresspayTransactionStorage: ExpresspayTransactionStorage
@@ -37,6 +41,7 @@ class ExpresspaySaleActivity : AppCompatActivity(R.layout.activity_sale) {
 
     private var payerBirthdate: Calendar? = null
 
+    var customCard:ExpresspayCard? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,11 +83,35 @@ class ExpresspaySaleActivity : AppCompatActivity(R.layout.activity_sale) {
         binding.btnSale.setOnClickListener {
             executeRequest(false)
         }
+
+        binding.rgCard.setOnCheckedChangeListener { radioGroup, i ->
+            customCard = null
+            if(radioGroup.checkedRadioButtonId == R.id.rb_custom_card_entry){
+                startActivity(Intent(this, ExpressCardDetailsActivity::class.java))
+                ExpressCardDetailsActivity.amount = binding.etxtOrderAmount.text.toString()
+                ExpressCardDetailsActivity.currency = binding.etxtOrderCurrencyCode.text.toString()
+                ExpressCardDetailsActivity.onSubmitCardDetails = { it: ExpresspayCard ->
+                    customCard = it
+                    setCardDetail()
+                }
+            }else{
+                setCardDetail()
+            }
+        }
+        binding.rgCard.check(binding.rgCard.children.toList().random().id)
+    }
+
+    private fun setCardDetail(){
+        val card = getCard()
+        binding.txtCardHolderName.setText(if(card == customCard) "" else "Test Card")
+        binding.txtCardNumber.setText(card?.number ?: "")
+        binding.txtCardExpiry.setText("${card?.expireMonth}/${card?.expireYear}")
+        binding.txtCardCVV.setText(card?.cvv ?: "")
     }
 
     private fun randomize(isAll: Boolean) {
         binding.etxtOrderId.setText(UUID.randomUUID().toString())
-        binding.etxtOrderAmount.setText(DecimalFormat("#.##").format(random.nextDouble() * 10_000).replace(",", "."))
+        binding.etxtOrderAmount.setText(DecimalFormat("#.##").format(random.nextDouble() * 1.0).replace(",", "."))
         binding.etxtOrderDescription.setText(Faker.Lorem.sentences())
         binding.etxtOrderCurrencyCode.setText("SAR")
 
@@ -99,8 +128,6 @@ class ExpresspaySaleActivity : AppCompatActivity(R.layout.activity_sale) {
                 256
             )}"
         )
-
-        binding.rgCard.check(binding.rgCard.children.toList().random().id)
         binding.txtResponse.text = ""
 
         if (isAll) {
@@ -147,14 +174,7 @@ class ExpresspaySaleActivity : AppCompatActivity(R.layout.activity_sale) {
             description = binding.etxtOrderDescription.text.toString()
         )
 
-        val card = when (binding.rgCard.checkedRadioButtonId) {
-            R.id.rb_card_success -> ExpresspayTestCard.SALE_SUCCESS
-            R.id.rb_card_failure -> ExpresspayTestCard.SALE_FAILURE
-            R.id.rb_card_capture_failure -> ExpresspayTestCard.CAPTURE_FAILURE
-            R.id.rb_card_3ds_success -> ExpresspayTestCard.SECURE_3D_SUCCESS
-            R.id.rb_card_3ds_failure -> ExpresspayTestCard.SECURE_3D_FAILURE
-            else -> ExpresspayTestCard.SALE_SUCCESS
-        }
+        val card = getCard()!!
 
         val payerOptions = ExpresspayPayerOptions(
             middleName = binding.etxtPayerMiddleName.text.toString(),
@@ -234,6 +254,19 @@ class ExpresspaySaleActivity : AppCompatActivity(R.layout.activity_sale) {
                 }
             }
         )
+    }
+
+
+    fun getCard(): ExpresspayCard? {
+        return when (binding.rgCard.checkedRadioButtonId) {
+            R.id.rb_card_success -> ExpresspayTestCard.SALE_SUCCESS
+            R.id.rb_card_failure -> ExpresspayTestCard.SALE_FAILURE
+            R.id.rb_card_capture_failure -> ExpresspayTestCard.CAPTURE_FAILURE
+            R.id.rb_card_3ds_success -> ExpresspayTestCard.SECURE_3D_SUCCESS
+            R.id.rb_card_3ds_failure -> ExpresspayTestCard.SECURE_3D_FAILURE
+            R.id.rb_custom_card_entry -> customCard
+            else -> ExpresspayTestCard.SALE_SUCCESS
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
