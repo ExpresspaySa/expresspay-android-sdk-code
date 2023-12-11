@@ -130,6 +130,7 @@ internal fun ExpressCardPayFragment.transactionCompleted(data: ExpresspayGetTran
         with(data) {
             when (status) {
                 ExpresspayStatus.SETTLED -> ExpressCardPay.shared()!!._onTransactionSuccess?.let { success -> success(saleResponse, data) }
+                ExpresspayStatus.PENDING -> ExpressCardPay.shared()!!._onTransactionSuccess?.let { success -> success(saleResponse, data) }
                 else -> ExpressCardPay.shared()!!._onTransactionFailure?.let { failure -> failure(saleResponse, data) }
 
 //                ExpresspayStatus.SECURE_3D -> TODO()
