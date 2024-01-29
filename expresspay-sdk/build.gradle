@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.library'
-//    id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'maven-publish'
 }
@@ -20,7 +19,6 @@ android {
     compileSdk 33
 
     defaultConfig {
-//        applicationId "com.expresspay.sdk"
         minSdk 16
         targetSdk 33
         versionCode 1
