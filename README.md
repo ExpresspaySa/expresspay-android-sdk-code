@@ -26,29 +26,28 @@ To get used to the SDK, download a [sample app](https://github.com/ExpresspaySa/
 
 ## Setup
 
-Add to the root build.gradle:
-
-```groovy
-allprojects {
-    repositories {
-        ...
-        maven {
-            url "https://jitpack.io"
-            credentials { username "jp_cppv4mkessjq12i4kqihrnjqvo" }
-        }
-    }
- }
-```
-
-Add to the package build.gradle:
+Add to the app module build.gradle:
 
 ```groovy
 dependencies {
-    implementation 'com.github.ExpresspaySa:expresspay-android-sdk-code:1.0.5'
+    implementation 'com.github.ExpresspaySa:expresspay-android-sdk-code:$LATEST_VERSION'
+}
+```
+Latest version is: [![](https://jitpack.io/v/ExpresspaySa/expresspay-android-sdk-code.svg)](https://jitpack.io/#ExpresspaySa/expresspay-android-sdk-code)
+
+Or always use the latest snapshot:
+
+```groovy
+dependencies {
+    implementation 'com.github.ExpresspaySa:expresspay-android-sdk-code:latest-SNAPSHOT'
 }
 ```
 
-Latest version is: [![](https://jitpack.io/v/ExpresspaySa/expresspay-android-sdk-code.svg)](https://jitpack.io/#ExpresspaySa/expresspay-android-sdk-code)
+Proguared Rules for expresspay dependency:
+```
+-keep class com.expresspay.sdk.model.**.**{ *; }
+```
+add the above rules to your proguard configuration file if your app is **minify** enabled.
 
 
 ## Quick Payment Implementation
