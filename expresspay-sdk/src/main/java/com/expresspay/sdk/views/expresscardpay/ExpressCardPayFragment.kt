@@ -3,6 +3,7 @@ package com.expresspay.sdk.views.expresscardpay
 import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -65,8 +66,8 @@ internal class ExpressCardPayFragment : Fragment(), TextWatcher, OnFocusChangeLi
 
         xpressCardPay?._order?.let {
             with(binding) {
-                lblAmount.setText(it.formattedAmount())
-                lblCurrency.setText(it.formattedCurrency())
+                lblAmount.text = it.formattedAmount()
+                lblCurrency.text = it.formattedCurrency()
             }
         }
 
@@ -93,6 +94,9 @@ internal class ExpressCardPayFragment : Fragment(), TextWatcher, OnFocusChangeLi
         binding.txtName.addTextChangedListener(this)
         binding.txtNumber.addTextChangedListener(this)
         binding.txtExpiry.addTextChangedListener(this)
+        val maxLength = 4
+        val filters = arrayOf<InputFilter>(InputFilter.LengthFilter(maxLength))
+        binding.txtCVV.filters = filters
         binding.txtCVV.addTextChangedListener(this)
     }
 
@@ -124,7 +128,7 @@ internal class ExpressCardPayFragment : Fragment(), TextWatcher, OnFocusChangeLi
             binding.card.cardData.isExpiryValid()
                     && binding.card.cardData.isNumberValid()
 //                    && binding.card.cardData.brand != Brand.GENERIC
-                    && binding.card.cardData.number.replace(" ", "").trim().length == 16
+                    && (binding.card.cardData.number.replace(" ", "").trim().length == 15 || binding.card.cardData.number.replace(" ", "").trim().length == 16)
                     && binding.card.cardData.isCvvValid()
                     && binding.card.holder.length > 3
 
